@@ -1,5 +1,17 @@
 CFLAGS= -Wall -fpic -coverage -lm -std=c99
 
+unittest1: unittest1.c dominion.o rngs.o
+	gcc -o unittest1 unittest1.c dominion.o rngs.o $(CFLAGS)
+
+unittest2: unittest2.c dominion.o rngs.o
+	gcc -o unittest2 unittest2.c dominion.o rngs.o $(CFLAGS)
+
+unittest3: unittest3.c dominion.o rngs.o
+	gcc -o unittest3 unittest3.c dominion.o rngs.o $(CFLAGS)
+
+unittest4: unittest4.c dominion.o rngs.o
+	gcc -o unittest4 unittest4.c dominion.o rngs.o $(CFLAGS)
+
 rngs.o: rngs.h rngs.c
 	gcc -c rngs.c -g  $(CFLAGS)
 
