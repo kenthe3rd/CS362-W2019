@@ -91,9 +91,7 @@ void isGameOverTest(){
     } else {
         printf("FAILED: %d cases\n", errorCounter);
     }
-
-
-
+    free(G);
 }
 
 int main(){

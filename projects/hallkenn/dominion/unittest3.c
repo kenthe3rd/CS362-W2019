@@ -57,6 +57,7 @@ void whoseTurnTest(){
     } else {
         printf("FAILED: %d failures\n", errorCounter);
     }
+    free(G);
 }
 
 int main(){

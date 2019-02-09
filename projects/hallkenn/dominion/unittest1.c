@@ -50,6 +50,7 @@ void numHandCardsTest(){
     } else {
         printf("FAIELD, with a value of %d\n", cardsInHand);
     }
+    free(G);
 }
 
 int main(){
