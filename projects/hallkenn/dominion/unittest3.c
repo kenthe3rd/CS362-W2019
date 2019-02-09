@@ -60,7 +60,6 @@ void whoseTurnTest(){
 }
 
 int main(){
-
     printf("Testing whoseTurn\n");
     printf("unittest3.c\n");
     whoseTurnTest();
