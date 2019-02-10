@@ -59,13 +59,13 @@ void smithyTest(){
                     playCard(j, -1, -1, -1, G);
                     smithyPlayCount++;
                     // after drawing 3 and discarding 1:
-                    //  the player should have 2 more cards in hand (6 total)
+                    //  the player should have 2 more cards in hand (7 total)
                     //  a smithy card should be in the discard pile
                     //  the player's deck should be 3 cards shorter
                     //  no state changes for other players
                     //  no state changes for victory card piles or kingdom card piles
                     cardsInHand = numHandCards(G);
-                    if( cardsInHand != 6 ){
+                    if( cardsInHand != 7 ){
                         cardsInHandErrors++;
                     }
                     if( G->deckCount[whoseTurn(G)] != cardsInDeck - 3 ){
