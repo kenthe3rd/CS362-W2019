@@ -10,7 +10,7 @@ unittestresults : unittest1 unittest2 unittest3 unittest4 cardtest1 cardtest2 ca
 	./cardtest2 >> unittestresults.out
 	./cardtest3 >> unittestresults.out
 	./cardtest4 >> unittestresults.out
-	gcov dominion.c
+	gcov -b dominion.c >> unittestresults.out
 	cat dominion.c.gcov >> unittestresults.out
 
 unittest1: unittest1.c dominion.o rngs.o
