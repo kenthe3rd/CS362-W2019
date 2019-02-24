@@ -1,6 +1,6 @@
 CFLAGS= -Wall -fpic -coverage -lm -std=c99
 
-randomtestcardresults: randomtestcard1 randomtestcard2 randomtestcard3
+randomtestcardresults: randomtestcard1 randomtestcard2 randomtestcardadventurer
 	touch randomtestcardadventurer.out
 	touch randomtestcard1.out
 	touch randomtestcard2.out
