@@ -5,9 +5,9 @@ randomtestcardresults: randomtestcard1 randomtestcard2 randomtestcardadventurer
 	touch randomtestcard1.out
 	touch randomtestcard2.out
 	touch coverage.out
-	./randomtestcard1 >> randomtestcardadventurer.out
+	./randomtestcardadventurer >> randomtestcardadventurer.out
 	./randomtestcard2 >> randomtestcard1.out
-	./randomtestcard3 >> randomtestcard2.out
+	./randomtestcard2 >> randomtestcard2.out
 	gcov -b dominion.c >> coverage.out
 	cat coverage.out >> randomtestcardadventurer.out
 	cat coverage.out >> randomtestcard1.out
