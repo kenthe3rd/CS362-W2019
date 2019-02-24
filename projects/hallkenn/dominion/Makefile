@@ -1,5 +1,30 @@
 CFLAGS= -Wall -fpic -coverage -lm -std=c99
 
+randomtestcardresults: randomtestcard1 randomtestcard2 randomtestcard3
+	touch randomtestcardadventurer.out
+	touch randomtestcard1.out
+	touch randomtestcard2.out
+	touch coverage.out
+	./randomtestcard1 >> randomtestcardadventurer.out
+	./randomtestcard2 >> randomtestcard1.out
+	./randomtestcard3 >> randomtestcard2.out
+	gcov -b dominion.c >> coverage.out
+	cat coverage.out >> randomtestcardadventurer.out
+	cat coverage.out >> randomtestcard1.out
+	cat coverage.out >> randomtestcard2.out
+	cat dominion.c.gcov >> randomtestcardadventurer.out
+	cat dominion.c.gcov >> randomtestcard1.out
+	cat dominion.c.gcov >> randomtestcard2.out
+
+randomtestcard3: randomtestcard3.c dominion.o rngs.o
+	gcc -o randomtestcard3 randomtestcard3.c dominion.o rngs.o $(CFLGAS)
+
+randomtestcard2: randomtestcard2.c dominion.o rngs.o
+	gcc -o randomtestcard2 randomtestcard2.c dominion.o rngs.o $(CFLGAS)
+
+randomtestcardadventurer: randomtestcardadventurer.c dominion.o rngs.o
+	gcc -o randomtestcard1 randomtestcard1.c dominion.o rngs.o $(CFLGAS)
+
 rngs.o: rngs.h rngs.c
 	gcc -c rngs.c -g  $(CFLAGS)
 

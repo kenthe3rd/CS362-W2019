@@ -1,6 +1,6 @@
 /*
-**  randomtestcard1.c: an automated random test generator for the
-**  smithy card; basic testing logic carried over from assignment 3,
+**  randomtestcardadventurer.c: an automated random test generator for the
+**  adventurer card; basic testing logic carried over from assignment 3,
 **  with added randomization of dependencies
 */
 
@@ -12,25 +12,27 @@
 #include <stdlib.h>
 #include <time.h>
 
-void smithyRandomTest(){
-    int i, j, cardsInHand, money, playedCards, card, numSmithys, cardsInDeck, otherPlayersHand, numPlayers;
-    int cardsInHandErrors = 0; 
-    int discardPileErrors = 0;
+void adventurerRandomTest(){
+    int i, j, k, numAdventurers, money, card, cardsInDeck, foundTreasures, otherPlayersHand, revealedCardsCounter, playedCards, numPlayers;
+    int adventurerPlayCount = 0;
+    int cardsInHandErrors = 0;
     int deckErrors = 0;
-    int smithyPlayCount = 0;
+    int discardPileErrors = 0;
     int otherPlayerStateErrors = 0;
     int supplyStateErrors = 0;
-    int supplyState[16]; 
-    int k[10] = {adventurer, council_room, feast, gardens, mine, remodel, smithy, village, baron, great_hall};
+    int expectedKeepErrors = 0;
+    int supplyState[16];
+    int expectedTreasureKeeps[2];
+    int kingdom[10] = {adventurer, council_room, feast, gardens, mine, remodel, smithy, village, baron, great_hall};
     struct gameState* G = malloc(sizeof(struct gameState));
 
-    printf("Playing 10000 games where Smithy is the only card played\n");
+    printf("Playing 10000 games where Adventurer is the only card played\n");
     for( i=0; i<10000; ++i ){
+        // set up turn and establish baselines for testing
         numPlayers = rand() % 3 + 2;
-        initializeGame(numPlayers, k, rand(), G);
-        numSmithys = 0;
-        while( !isGameOver(G) ){
-            // set up turn and establish baselines for testing
+        initializeGame(numPlayers, kingdom, rand(), G);
+        numAdventurers = 0;
+        while( !(isGameOver(G)) ){
             money = 0;
             if( whoseTurn(G) == 0 ){
                 otherPlayersHand = G->handCount[1];
@@ -53,44 +55,48 @@ void smithyRandomTest(){
             supplyState[13] = G->supplyCount[village];
             supplyState[14] = G->supplyCount[baron];
             supplyState[15] = G->supplyCount[great_hall];
-
-            // every turn, look for smithy in player's hand and play it if we can
             for( j=0; j<numHandCards(G); ++j ){
                 card = handCard(j, G);
-                if( card == smithy ){
+                if( card == adventurer ){
                     cardsInDeck = G->deckCount[whoseTurn(G)];
+                    foundTreasures = 0;
+                    for( k=0; k<G->deckCount[whoseTurn(G)]; ++k ){
+                        card = G->deck[whoseTurn(G)][k];
+                        revealedCardsCounter++;
+                        if( card == copper || card == silver || card == gold ){
+                            expectedTreasureKeeps[foundTreasures] = card;
+                            foundTreasures++;
+                        }
+                        if( foundTreasures == 2 ){
+                            break;
+                        }
+                    }
                     playCard(j, -1, -1, -1, G);
-                    smithyPlayCount++;
-                    // after drawing 3 and discarding 1:
-                    //  the player should have 2 more cards in hand (7 total)
-                    //  a smithy card should be in the discard pile
-                    //  the player's deck should be 3 cards shorter
-                    //  no state changes for other players
-                    //  no state changes for victory card piles or kingdom card piles
-                    cardsInHand = numHandCards(G);
-                    if( cardsInHand != 7 ){
+                    adventurerPlayCount++;
+                    if( foundTreasures == 1 && handCard(numHandCards(G)-1, G) != expectedTreasureKeeps[0]){
+                        expectedKeepErrors++;
+                    } else if( foundTreasures == 2 ){
+                        if( handCard(numHandCards(G)-2, G) != expectedTreasureKeeps[0] || handCard(numHandCards(G)-1, G) != expectedTreasureKeeps[1]){
+                            expectedKeepErrors++;
+                        }
+                    }
+                    if( numHandCards(G) != 4 + foundTreasures ){
                         cardsInHandErrors++;
                     }
-                    if( G->deckCount[whoseTurn(G)] != cardsInDeck - 3 ){
+                    if( G->deckCount[whoseTurn(G)] != cardsInDeck - revealedCardsCounter ){
                         deckErrors++;
                     }
                     playedCards = G->playedCardCount;
-                    for( j=0; j<playedCards; ++j ){
-                        if( G->playedCards[j] == smithy ){
+                    for( k=0; k<playedCards; ++k ){
+                        if( G->playedCards[k] == adventurer ){
                             break;
                         }
-                        if( j == playedCards - 1 ){
+                        if( k == playedCards - 1 ){
                             discardPileErrors++;
                         }
                     }
-                    for( j=0; j<numPlayers; ++j ){
-                        if( j == whoseTurn(G) ){
-                            continue;
-                        } else {
-                            if( otherPlayersHand != 0 ){
-                                otherPlayerStateErrors++;
-                            }
-                        }
+                    if( otherPlayersHand != 0 ){
+                        otherPlayerStateErrors++;
                     }
                     if( supplyState[0] != G->supplyCount[copper] ){
                         supplyStateErrors++;
@@ -144,7 +150,7 @@ void smithyRandomTest(){
                 }
             }
 
-            // player checks their money and tries to buy something 
+
             for( j=0; j<numHandCards(G); ++j ){
                 card = handCard(j, G);
                 if( card == copper ){
@@ -157,13 +163,11 @@ void smithyRandomTest(){
             }
             if (money >= 8) {
                 buyCard(province, G);
-            }
-            else if (money >= 6) {
+            } else if (money >= 6 && numAdventurers < 2) {
+                buyCard(adventurer, G);
+                numAdventurers++;
+            } else if (money >= 6) {
                 buyCard(gold, G);
-            }
-            else if (money >= 4 && numSmithys < 2) {
-                buyCard(smithy, G);
-                numSmithys++;
             }
             else if (money >= 3) {
                 buyCard(silver, G);
@@ -171,20 +175,20 @@ void smithyRandomTest(){
             endTurn(G);
         }
     }
-
     free(G);
-    printf("Smithy played %d times\n", smithyPlayCount);
+    printf("Adventurer played %d times\n", adventurerPlayCount);
     printf("Cards in hand errors: %d\n", cardsInHandErrors);
     printf("Cards in deck errors: %d\n", deckErrors);
     printf("Discard pile errors: %d\n", discardPileErrors);
     printf("Other player state errors: %d\n", otherPlayerStateErrors);
     printf("Supply state errors: %d\n", supplyStateErrors);
+    printf("Expected keep errors: %d\n", expectedKeepErrors);
 }
 
 int main(){
     srand(time(NULL));
-    printf("Testing smithy\n");
-    printf("randomtestcard1.c\n");
-    smithyRandomTest();
+    printf("Testing adventurer\n");
+    printf("randomtestcardadventurer.c\n");
+    adventurerRandomTest();
     return 0;
 }
