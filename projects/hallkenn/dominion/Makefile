@@ -17,13 +17,13 @@ randomtestcardresults: randomtestcard1 randomtestcard2 randomtestcardadventurer
 	cat dominion.c.gcov >> randomtestcard2.out
 
 randomtestcard1: randomtestcard1.c dominion.o rngs.o
-	gcc -o randomtestcard1 randomtestcard1.c dominion.o rngs.o $(CFLGAS)
+	gcc -o randomtestcard1 randomtestcard1.c dominion.o rngs.o $(CFLAGS)
 
 randomtestcard2: randomtestcard2.c dominion.o rngs.o
-	gcc -o randomtestcard2 randomtestcard2.c dominion.o rngs.o $(CFLGAS)
+	gcc -o randomtestcard2 randomtestcard2.c dominion.o rngs.o $(CFLAGS)
 
 randomtestcardadventurer: randomtestcardadventurer.c dominion.o rngs.o
-	gcc -o randomtestcardadventurer randomtestcardadventurer.c dominion.o rngs.o $(CFLGAS)
+	gcc -o randomtestcardadventurer randomtestcardadventurer.c dominion.o rngs.o $(CFLAGS)
 
 rngs.o: rngs.h rngs.c
 	gcc -c rngs.c -g  $(CFLAGS)
