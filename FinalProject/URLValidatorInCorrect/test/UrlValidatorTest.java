@@ -184,6 +184,49 @@ public class UrlValidatorTest extends TestCase {
       int failureCounter = 0;
       System.out.println("TESTING PATH PARTITION");
       UrlValidator urlValidator = new UrlValidator();
+      String validEverythingBesidesPath = "http://www.google.com/";
+      char[] garbage = {':', '@', '[', ']'}; 
+      for( int i=0; i<100000; ++i ){
+         int buildValidPath = (int) (Math.random() * 100) % 2;
+         String path = "";
+         String url = "";
+         if( buildValidPath == 1 ){
+            // BUILD A VALID PATH
+            int numPathSegments = (int) Math.random() * 16;
+            for( int j=0; j<numPathSegments; ++j ){
+               if( j != 0){
+                  path = path + '/';
+               }
+               int segmentLength = (int) (Math.random() * 32) + 1;
+               for( int k=0; k<segmentLength; ++k ){
+                  char character = (char) ((int) (Math.random() * 25) + 97);
+                  path = path + character;
+               }
+            }
+            url = validEverythingBesidesPath + path;
+            if( urlValidator.isValid(url) == false ){
+               failureCounter++;
+            }
+         } else if( buildValidPath == 0 ){
+            // BUILD A GARBAGE PATH
+            int stringLength = (int) (Math.random() * 128) + 1;
+            for( int j=0; j<stringLength; ++j ){
+               int maybeAddGarbage = (int) (Math.random() * 100) % 2;
+               if( maybeAddGarbage == 0 ){
+                  char character = (char) ((int) (Math.random() * 25) + 97);
+                  path = path + character;
+               } else {
+                  int pieceOfGarbage = (int) (Math.random() * 100) % 4;
+                  path = path + garbage[pieceOfGarbage];
+               }
+            }
+            url = validEverythingBesidesPath + path;
+            if( urlValidator.isValid(url) == true ){
+               failureCounter++;
+            }
+         }
+      }
+      System.out.println("FAILURES: " + Integer.toString(failureCounter));
    }
    
    // uses randomization on the fifth partition (query), holds other partitions constant 
