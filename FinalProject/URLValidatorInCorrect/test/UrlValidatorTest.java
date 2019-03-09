@@ -29,11 +29,12 @@ public class UrlValidatorTest extends TestCase {
    // uses randomization on the first partition (scheme), holds other partitions constant 
    public void testYourFirstPartition(){
       UrlValidator urlValidator = new UrlValidator();
-      int failureCounter = 0;
+      int unexpectedValid = 0;
+      int unexpectedInvalid = 0;
       System.out.println("TESTING SCHEME PARTITION");
       String[] validSchemes = {"aaa","aaas","about","acap","acct","cap","cid","coap","coap+tcp","coap+ws","coaps","coaps+tcp","coaps+ws","crid","data","dav","dict","dns","example","file","ftp","geo","go","gopher","h323","http","https","iax","icap","im","imap","info","ipp","ipps","iris","iris.beep","iris.lwz","iris.xpc","iris.xpcs","jabber","ldap","leaptofrogans","mailto","mid","msrp","msrps","mtqp","mupdate","news","nfs","ni","nih","nntp","opaquelocktoken","pkcs11","pop","pres","reload","rtsp","rtsps","rtspu","service","session","shttp","sieve","sip","sips","sms","snmp","soap.beep","soap.beeps","stun","stuns","tag","tel","telnet","tftp","thismessage","tip","tn3270","turn","turns","tv","urn","vemmi","vnc","ws","wss","xcon","xcon-userid","xmlrpc.beep","xmlrpc.beeps","xmpp","z39.50r","z39.50s"};
       String validEverythingBesidesScheme = "://www.google.com/search?source=hp&ei=ts56XMTHJNeE-gTuv4WgBw&q=java&btnK=Google+Search&oq=java&gs_l=psy-ab.3..35i39l2j0i67l8.4229.4503..4734...1.0..0.69.325.5......0....1..gws-wiz.....6..0i131j0.UP-xeLeZftI";
-      for( int i=0; i<1000; ++i ){
+      for( int i=0; i<1000000; ++i ){
          int stringIsValidScheme = 0;
          //generate a random string
          int stringLength =  (int) (Math.random() * 10);
@@ -54,26 +55,30 @@ public class UrlValidatorTest extends TestCase {
          //if it is a valid scheme, assert true, else assert false
          if( stringIsValidScheme == 1 ){
             if( urlValidator.isValid(url) == false ){
-               //System.out.println("Unexpected invalid: " + url);
-               failureCounter++;
+               System.out.println("Unexpected invalid: " + url);
+               unexpectedInvalid++;
             } 
          } else {
             if( urlValidator.isValid(url) == true ){
-               //System.out.println("Unexpected valid: " + url);
-               failureCounter++;
+               System.out.println("Unexpected valid: " + url);
+               unexpectedValid++;
             }
          }
       }
-      System.out.println("FAILURES: " + Integer.toString(failureCounter));
+      System.out.println("Unexpected Valids: " + Integer.toString(unexpectedValid));
+      System.out.println("Unexpected Invalids: " + Integer.toString(unexpectedInvalid));
    }
    
    // uses randomization on the second partition (authority), holds other partitions constant 
    public void testYourSecondPartition(){
-      int failureCounter = 0;
+      int totallyRandomUnexpectedValid = 0;
+      int totallyRandomUnexpectedInvalid = 0;
+      int ipv4UnexpectedValid = 0;
+      int ipv4UnexpectedInvalid = 0;
       UrlValidator urlValidator = new UrlValidator();
       System.out.println("TESTING AUTHORITY PARTITION");
       String validEverythingAfterAuthority = "/search?source=hp&ei=ts56XMTHJNeE-gTuv4WgBw&q=java&btnK=Google+Search&oq=java&gs_l=psy-ab.3..35i39l2j0i67l8.4229.4503..4734...1.0..0.69.325.5......0....1..gws-wiz.....6..0i131j0.UP-xeLeZftI";
-      for( int i=0; i<1000; ++i ){
+      for( int i=0; i<1000000; ++i ){
          int stringIsValidAuthority = 1;
          String authority = "";
          int authorityType = (int) (Math.random() * 1000) % 2;
@@ -93,14 +98,14 @@ public class UrlValidatorTest extends TestCase {
             if(stringIsValidAuthority == 1){
                String url = "http://www." + authority + ".com" + validEverythingAfterAuthority;
                if( urlValidator.isValid(url) == false){
-                  //System.out.println("Unexpected invalid: " + url);
-                  failureCounter++;
+                  System.out.println("Unexpected invalid: " + url);
+                   totallyRandomUnexpectedInvalid++;
                }
             } else {
                String url = "http" + authority + validEverythingAfterAuthority;
                if( urlValidator.isValid(url) == true){
-                  //System.out.println("Unexpected valid: " + url);
-                  failureCounter++;
+                  System.out.println("Unexpected valid: " + url);
+                   totallyRandomUnexpectedValid++;
                }
             }
          } else if( authorityType == 1 ){
@@ -122,26 +127,30 @@ public class UrlValidatorTest extends TestCase {
             }
             String url = "http://" + authority + '/';
             if( isValidIP == 1 && urlValidator.isValid(url) == false ){
-               //System.out.println("Unexpected invalid: " + url);
-               failureCounter++;
+               System.out.println("Unexpected invalid: " + url);
+               ipv4UnexpectedInvalid++;
             } else if( isValidIP == 0 && urlValidator.isValid(url) == true ){
-               //System.out.println("Unexpected invalid: " + url);
-               failureCounter++;
+               System.out.println("Unexpected valid: " + url);
+               ipv4UnexpectedValid++;
             }
          }
       }
-      System.out.println("FAILURES: " + Integer.toString(failureCounter));
+      System.out.println("Unexpected Random Valids: " + Integer.toString(totallyRandomUnexpectedValid));
+      System.out.println("Unexpected Random Invalids: " + Integer.toString(totallyRandomUnexpectedInvalid));
+      System.out.println("Unexpected ipv4 Valids: " + Integer.toString(ipv4UnexpectedValid));
+      System.out.println("Unexpected ipv4 Invalids: " + Integer.toString(ipv4UnexpectedInvalid));
    }
    
    // uses randomization on the third partition (port), holds other partitions constant 
    public void testYourThirdPartition(){
-      int failureCounter = 0;
+      int unexpectedValid = 0;
+      int unexpectedInvalid = 0;
       System.out.println("TESTING PORT PARTITION");
       String validSchemeAndHost = "http://www.google.com:";
       String validPath = "/";
       UrlValidator urlValidator = new UrlValidator();
       int portIsNumbersOnly = 1;
-      for( int i=0; i<100000; ++i ){
+      for( int i=0; i<1000000; ++i ){
          int stringLength = (int) (Math.random() * 16) + 1;
          String port = "";
          portIsNumbersOnly = 1;
@@ -160,33 +169,35 @@ public class UrlValidatorTest extends TestCase {
             int portInt = Integer.parseInt(port);
             if(portInt > 65535 || portInt < 0){
                if( urlValidator.isValid(url) == true){
-                  //System.out.println("Unexpected valid: " + url);
-                  failureCounter++;
+                  System.out.println("Unexpected valid: " + url);
+                   unexpectedValid++;
                }
             } else {
                if( urlValidator.isValid(url) == false){
-                  //System.out.println("Unexpected invalid: " + url);
-                  failureCounter++;
+                  System.out.println("Unexpected invalid: " + url);
+                   unexpectedInvalid++;
                }
             }
          } else {
             if( urlValidator.isValid(url) == true){
-               //System.out.println("Unexpected valid: " + url);
-               failureCounter++;
+               System.out.println("Unexpected valid: " + url);
+                unexpectedValid++;
             }
          }
       }
-      System.out.println("FAILURES: " + Integer.toString(failureCounter));
+      System.out.println("Unexpected Valids: " + Integer.toString(unexpectedValid));
+      System.out.println("Unexpected Invalids: " + Integer.toString(unexpectedInvalid));
    }
    
    // uses randomization on the fourth partition (path), holds other partitions constant 
    public void testYourFourthPartition() {
-      int failureCounter = 0;
+      int unexpectedValid = 0;
+      int unexpectedInvalid = 0;
       System.out.println("TESTING PATH PARTITION");
       UrlValidator urlValidator = new UrlValidator();
       String validEverythingBesidesPath = "http://www.google.com/";
       char[] garbage = {':', '@', '[', ']'}; 
-      for( int i=0; i<100000; ++i ){
+      for( int i=0; i<1000000; ++i ){
          int buildValidPath = (int) (Math.random() * 100) % 2;
          String path = "";
          String url = "";
@@ -205,7 +216,8 @@ public class UrlValidatorTest extends TestCase {
             }
             url = validEverythingBesidesPath + path;
             if( urlValidator.isValid(url) == false ){
-               failureCounter++;
+                System.out.println("Unexpected invalid: " + url);
+                unexpectedInvalid++;
             }
          } else if( buildValidPath == 0 ){
             // BUILD A GARBAGE PATH
@@ -222,20 +234,23 @@ public class UrlValidatorTest extends TestCase {
             }
             url = validEverythingBesidesPath + path;
             if( urlValidator.isValid(url) == true ){
-               failureCounter++;
+                System.out.println("Unexpected valid: " + url);
+                unexpectedValid++;
             }
          }
       }
-      System.out.println("FAILURES: " + Integer.toString(failureCounter));
+      System.out.println("Unexpected Valids: " + Integer.toString(unexpectedValid));
+      System.out.println("Unexpected Invalids: " + Integer.toString(unexpectedInvalid));
    }
    
    // uses randomization on the fifth partition (query), holds other partitions constant 
    public void testYourFifthPartition(){
-      int failureCounter = 0;
+      int unexpectedValid = 0;
+      int unexpectedInvalid = 0;
       System.out.println("TESTING QUERY PARTITION");
       String validEverythingBesidesQuery = "http://www.google.com/search?";
       UrlValidator urlValidator = new UrlValidator();
-      for( int i=0; i<100000; ++i ){
+      for( int i=0; i<1000000; ++i ){
          int buildValidQuery = (int) (Math.random() * 1000) % 2;
          String query = "";
          String url = "";
@@ -270,7 +285,8 @@ public class UrlValidatorTest extends TestCase {
             }
             url = validEverythingBesidesQuery + query;
             if( urlValidator.isValid(url) == false ){
-               failureCounter++;
+                System.out.println("Unexpected invalid: " + url);
+                unexpectedInvalid++;
             }
          } else {
             // BUILD SOME GARBAGE
@@ -281,10 +297,12 @@ public class UrlValidatorTest extends TestCase {
             }
             url = validEverythingBesidesQuery + query;
             if( urlValidator.isValid(url) == true ){
-               failureCounter++;
+                System.out.println("Unexpected valid: " + url);
+                unexpectedValid++;
             }
          }
       }
-      System.out.println("FAILURES: " + failureCounter);
+      System.out.println("Unexpected Valids: " + Integer.toString(unexpectedValid));
+      System.out.println("Unexpected Invalids: " + Integer.toString(unexpectedInvalid));
    }
 }
