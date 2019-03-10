@@ -29,6 +29,8 @@ public class UrlValidatorTest extends TestCase {
    // uses randomization on the first partition (scheme), holds other partitions constant 
    public void testYourFirstPartition(){
       UrlValidator urlValidator = new UrlValidator();
+      int totalValid = 0;
+      int totalInvalid = 0;
       int unexpectedValid = 0;
       int unexpectedInvalid = 0;
       System.out.println("TESTING SCHEME PARTITION");
@@ -54,19 +56,21 @@ public class UrlValidatorTest extends TestCase {
          String url = scheme + validEverythingBesidesScheme;
          //if it is a valid scheme, assert true, else assert false
          if( stringIsValidScheme == 1 ){
+        	 totalValid++;
             if( urlValidator.isValid(url) == false ){
-               System.out.println("Unexpected invalid: " + url);
+               //System.out.println("Unexpected invalid: " + url);
                unexpectedInvalid++;
             } 
          } else {
+        	 totalInvalid++;
             if( urlValidator.isValid(url) == true ){
-               System.out.println("Unexpected valid: " + url);
+               //System.out.println("Unexpected valid: " + url);
                unexpectedValid++;
             }
          }
       }
-      System.out.println("Unexpected Valids: " + Integer.toString(unexpectedValid));
-      System.out.println("Unexpected Invalids: " + Integer.toString(unexpectedInvalid));
+      System.out.println("Unexpected Valids: " + Integer.toString(unexpectedValid) + " out of: " + Integer.toString(totalInvalid) + " invalid inputs");
+      System.out.println("Unexpected Invalids: " + Integer.toString(unexpectedInvalid) + " out of: " + Integer.toString(totalValid) + " valid inputs");
    }
    
    // uses randomization on the second partition (authority), holds other partitions constant 
@@ -98,14 +102,14 @@ public class UrlValidatorTest extends TestCase {
             if(stringIsValidAuthority == 1){
                String url = "http://www." + authority + ".com" + validEverythingAfterAuthority;
                if( urlValidator.isValid(url) == false){
-                  System.out.println("Unexpected invalid: " + url);
-                   totallyRandomUnexpectedInvalid++;
+                  //System.out.println("Unexpected invalid: " + url);
+                  totallyRandomUnexpectedInvalid++;
                }
             } else {
                String url = "http" + authority + validEverythingAfterAuthority;
                if( urlValidator.isValid(url) == true){
-                  System.out.println("Unexpected valid: " + url);
-                   totallyRandomUnexpectedValid++;
+                  //System.out.println("Unexpected valid: " + url);
+                  totallyRandomUnexpectedValid++;
                }
             }
          } else if( authorityType == 1 ){
@@ -127,10 +131,10 @@ public class UrlValidatorTest extends TestCase {
             }
             String url = "http://" + authority + '/';
             if( isValidIP == 1 && urlValidator.isValid(url) == false ){
-               System.out.println("Unexpected invalid: " + url);
+               //System.out.println("Unexpected invalid: " + url);
                ipv4UnexpectedInvalid++;
             } else if( isValidIP == 0 && urlValidator.isValid(url) == true ){
-               System.out.println("Unexpected valid: " + url);
+               //System.out.println("Unexpected valid: " + url);
                ipv4UnexpectedValid++;
             }
          }
@@ -143,6 +147,8 @@ public class UrlValidatorTest extends TestCase {
    
    // uses randomization on the third partition (port), holds other partitions constant 
    public void testYourThirdPartition(){
+      int totalValid = 0;
+      int totalInvalid = 0;
       int unexpectedValid = 0;
       int unexpectedInvalid = 0;
       System.out.println("TESTING PORT PARTITION");
@@ -167,30 +173,36 @@ public class UrlValidatorTest extends TestCase {
          String url = validSchemeAndHost + port + validPath;
          if( portIsNumbersOnly == 1 ){
             int portInt = Integer.parseInt(port);
+
             if(portInt > 65535 || portInt < 0){
-               if( urlValidator.isValid(url) == true){
-                  System.out.println("Unexpected valid: " + url);
-                   unexpectedValid++;
+            	totalInvalid++;
+            	if( urlValidator.isValid(url) == true){
+                  //System.out.println("Unexpected valid: " + url);
+                  unexpectedValid++;
                }
             } else {
+            	totalValid++;
                if( urlValidator.isValid(url) == false){
-                  System.out.println("Unexpected invalid: " + url);
-                   unexpectedInvalid++;
+                  //System.out.println("Unexpected invalid: " + url);
+                  unexpectedInvalid++;
                }
             }
          } else {
+        	totalInvalid++;
             if( urlValidator.isValid(url) == true){
-               System.out.println("Unexpected valid: " + url);
-                unexpectedValid++;
+               //System.out.println("Unexpected valid: " + url);
+               unexpectedValid++;
             }
          }
       }
-      System.out.println("Unexpected Valids: " + Integer.toString(unexpectedValid));
-      System.out.println("Unexpected Invalids: " + Integer.toString(unexpectedInvalid));
+      System.out.println("Unexpected Valids: " + Integer.toString(unexpectedValid) + " out of: " + Integer.toString(totalInvalid) + " invalid inputs");
+      System.out.println("Unexpected Invalids: " + Integer.toString(unexpectedInvalid) + " out of: " + Integer.toString(totalValid) + " valid inputs");
    }
    
    // uses randomization on the fourth partition (path), holds other partitions constant 
    public void testYourFourthPartition() {
+      int totalValid = 0;
+      int totalInvalid = 0;
       int unexpectedValid = 0;
       int unexpectedInvalid = 0;
       System.out.println("TESTING PATH PARTITION");
@@ -202,6 +214,7 @@ public class UrlValidatorTest extends TestCase {
          String path = "";
          String url = "";
          if( buildValidPath == 1 ){
+        	 totalValid++;
             // BUILD A VALID PATH
             int numPathSegments = (int) Math.random() * 16;
             for( int j=0; j<numPathSegments; ++j ){
@@ -216,10 +229,11 @@ public class UrlValidatorTest extends TestCase {
             }
             url = validEverythingBesidesPath + path;
             if( urlValidator.isValid(url) == false ){
-                System.out.println("Unexpected invalid: " + url);
+                //System.out.println("Unexpected invalid: " + url);
                 unexpectedInvalid++;
             }
          } else if( buildValidPath == 0 ){
+        	totalInvalid++;
             // BUILD A GARBAGE PATH
             int stringLength = (int) (Math.random() * 128) + 1;
             for( int j=0; j<stringLength; ++j ){
@@ -234,17 +248,19 @@ public class UrlValidatorTest extends TestCase {
             }
             url = validEverythingBesidesPath + path;
             if( urlValidator.isValid(url) == true ){
-                System.out.println("Unexpected valid: " + url);
+            	//System.out.println("Unexpected valid: " + url);
                 unexpectedValid++;
             }
          }
       }
-      System.out.println("Unexpected Valids: " + Integer.toString(unexpectedValid));
-      System.out.println("Unexpected Invalids: " + Integer.toString(unexpectedInvalid));
+      System.out.println("Unexpected Valids: " + Integer.toString(unexpectedValid) + " out of: " + Integer.toString(totalInvalid) + " invalid inputs");
+      System.out.println("Unexpected Invalids: " + Integer.toString(unexpectedInvalid) + " out of: " + Integer.toString(totalValid) + " valid inputs");
    }
    
    // uses randomization on the fifth partition (query), holds other partitions constant 
    public void testYourFifthPartition(){
+      int totalValid = 0;
+      int totalInvalid = 0;
       int unexpectedValid = 0;
       int unexpectedInvalid = 0;
       System.out.println("TESTING QUERY PARTITION");
@@ -255,6 +271,7 @@ public class UrlValidatorTest extends TestCase {
          String query = "";
          String url = "";
          if( buildValidQuery == 1 ){
+        	totalValid++;
             // BUILD A VALID QUERY
             int numArgs = (int) (Math.random() * 32) + 1; 
             for( int j=0; j<numArgs; ++j ){
@@ -285,10 +302,11 @@ public class UrlValidatorTest extends TestCase {
             }
             url = validEverythingBesidesQuery + query;
             if( urlValidator.isValid(url) == false ){
-                System.out.println("Unexpected invalid: " + url);
+                //System.out.println("Unexpected invalid: " + url);
                 unexpectedInvalid++;
             }
          } else {
+        	 totalInvalid++;
             // BUILD SOME GARBAGE
             int stringLength = (int) (Math.random() * 128);
             for( int j=0; j<stringLength; ++j ){
@@ -297,12 +315,12 @@ public class UrlValidatorTest extends TestCase {
             }
             url = validEverythingBesidesQuery + query;
             if( urlValidator.isValid(url) == true ){
-                System.out.println("Unexpected valid: " + url);
+                //System.out.println("Unexpected valid: " + url);
                 unexpectedValid++;
             }
          }
       }
-      System.out.println("Unexpected Valids: " + Integer.toString(unexpectedValid));
-      System.out.println("Unexpected Invalids: " + Integer.toString(unexpectedInvalid));
+      System.out.println("Unexpected Valids: " + Integer.toString(unexpectedValid) + " out of: " + Integer.toString(totalInvalid) + " invalid inputs");
+      System.out.println("Unexpected Invalids: " + Integer.toString(unexpectedInvalid) + " out of: " + Integer.toString(totalValid) + " valid inputs");
    }
 }
