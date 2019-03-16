@@ -1,4 +1,5 @@
 CFLAGS= -Wall -fpic -coverage -lm -std=c99
+
 unittestresults : unittest1 unittest2 unittest3 unittest4 cardtest1 cardtest2 cardtest3 cardtest4
 	touch unittestresults.out
 	./unittest1 >> unittestresults.out
@@ -6,7 +7,6 @@ unittestresults : unittest1 unittest2 unittest3 unittest4 cardtest1 cardtest2 ca
 	./unittest3 >> unittestresults.out
 	./unittest4 >> unittestresults.out
 	./cardtest1 >> unittestresults.out
-	./cardtest2 >> unittestresults.out
 	./cardtest3 >> unittestresults.out
 	./cardtest4 >> unittestresults.out
 	gcov -b dominion.c >> unittestresults.out
@@ -35,13 +35,12 @@ cardtest3: cardtest3.c dominion.o rngs.o
 
 cardtest4: cardtest4.c dominion.o rngs.o
 	gcc -o cardtest4 cardtest4.c dominion.o rngs.o $(CFLAGS)
-	
+
 randomtestcardresults: randomtestcard1 randomtestcard2 randomtestcardadventurer
 	touch randomtestcardadventurer.out
 	touch randomtestcard1.out
 	touch randomtestcard2.out
 	touch coverage.out
-	./randomtestcardadventurer >> randomtestcardadventurer.out
 	./randomtestcard1 >> randomtestcard1.out
 	./randomtestcard2 >> randomtestcard2.out
 	gcov -b dominion.c >> coverage.out
